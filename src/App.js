@@ -3,7 +3,7 @@ import { Container, Grid, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import ValidationTextField from "./components/TextField";
+import TextField from "./components/TextField";
 import DatePickerField from "./components/DatePicker";
 import CheckboxWrapper from "./components/Checkbox";
 import Button from "./components/ButtonWrapper";
@@ -77,22 +77,13 @@ const App = () => {
         <Form className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <ValidationTextField
-                name="firstName"
-                label="First Name*"
-              ></ValidationTextField>
+              <TextField name="firstName" label="First Name*"></TextField>
             </Grid>
             <Grid item xs={6}>
-              <ValidationTextField
-                name="lastName"
-                label="Last Name*"
-              ></ValidationTextField>
+              <TextField name="lastName" label="Last Name*"></TextField>
             </Grid>
             <Grid item xs={12}>
-              <ValidationTextField
-                name="email"
-                label="Email*"
-              ></ValidationTextField>
+              <TextField name="email" label="Email*"></TextField>
             </Grid>
             <Grid item xs={6}>
               <DatePickerField name="date" label="Birth Date" />
