@@ -3,7 +3,7 @@ import { Container, Grid, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import TextField from "./components/TextField";
+import ValidationTextField from "./components/TextField";
 import DatePickerField from "./components/DatePicker";
 import CheckboxWrapper from "./components/Checkbox";
 import Button from "./components/ButtonWrapper";
@@ -62,25 +62,37 @@ const App = () => {
               const response = await axios.get(
                 `/api/email-validator.php?email=${values.email}`
               );
-              console.log(response.data.status_message);
+              alert(
+                `${JSON.stringify(values, null, 2)}
+                ${response.data.status_message}`
+              );
             } catch (error) {
               console.error(error);
             }
           };
-          alert(JSON.stringify(values, null, 2));
+
           handleValid();
         }}
       >
         <Form className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <TextField name="firstName" label="First Name*"></TextField>
+              <ValidationTextField
+                name="firstName"
+                label="First Name*"
+              ></ValidationTextField>
             </Grid>
             <Grid item xs={6}>
-              <TextField name="lastName" label="Last Name*"></TextField>
+              <ValidationTextField
+                name="lastName"
+                label="Last Name*"
+              ></ValidationTextField>
             </Grid>
             <Grid item xs={12}>
-              <TextField name="email" label="Email*"></TextField>
+              <ValidationTextField
+                name="email"
+                label="Email*"
+              ></ValidationTextField>
             </Grid>
             <Grid item xs={6}>
               <DatePickerField name="date" label="Birth Date" />
