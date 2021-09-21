@@ -1,5 +1,11 @@
-import React from "react";
-import { Container, Grid, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  CircularProgress,
+  Container,
+  Grid,
+  Input,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -30,11 +36,18 @@ const useStyles = makeStyles(() => ({
 const App = () => {
   const axios = require("axios");
   const classes = useStyles();
+  const [email, setEmail] = useState("");
+  const [isValid, setIsValid] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  let textColor;
+  if (isValid === "Not Valid") {
+    textColor = "red";
+  } else textColor = "green";
 
   const INITIAL_FORM_STATE = {
     firstName: "",
     lastName: "",
-    email: "",
+    email: email,
     date: "",
     picked: "",
   };
@@ -47,9 +60,26 @@ const App = () => {
       .required("Required")
       .min(3, "Last Name require atleast 3 charactres ")
       .max(25, "Last Name cannot have more than 25 charactres "),
-    email: Yup.string().email("Invalid email.").required("Required"),
+    email: Yup.string().email("Invalid email.").required("Required Email"),
     date: Yup.date().notRequired(),
   });
+
+  const handleValid = async (values) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `/api/email-validator.php?email=${values}`
+      );
+      setIsValid(response.data.status_message);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    handleValid(email);
+  }, [email]);
 
   return (
     <Container className={classes.mainBox} data-testid="test_app">
@@ -57,22 +87,10 @@ const App = () => {
         initialValues={{ ...INITIAL_FORM_STATE }}
         validationSchema={FORM_VALIDATION}
         onSubmit={(values) => {
-          const handleValid = async () => {
-            try {
-              const response = await axios.get(
-                `/api/email-validator.php?email=${values.email}`
-              );
-              alert(
-                `${JSON.stringify(values, null, 2)}
-                ${response.data.status_message}`
-              );
-            } catch (error) {
-              console.error(error);
-            }
-          };
-
-          handleValid();
+          handleValid(values.email);
+          alert(`${JSON.stringify(values, null, 2)}`);
         }}
+        enableReinitialize={true}
       >
         <Form className={classes.form}>
           <Grid container spacing={2}>
@@ -83,7 +101,14 @@ const App = () => {
               <TextField name="lastName" label="Last Name*"></TextField>
             </Grid>
             <Grid item xs={12}>
-              <TextField name="email" label="Email*"></TextField>
+              <TextField
+                name="email"
+                label="Email*"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              ></TextField>
             </Grid>
             <Grid item xs={6}>
               <DatePickerField name="date" label="Birth Date" />
@@ -95,6 +120,9 @@ const App = () => {
               />
             </Grid>
           </Grid>
+          <Typography align="center" style={{ color: textColor }}>
+            {isLoading ? <CircularProgress /> : isValid}
+          </Typography>
           <Button>Submit</Button>
           <Typography variant="body1" style={{ color: "rgb(118, 119, 119)" }}>
             Required fields marked with *
