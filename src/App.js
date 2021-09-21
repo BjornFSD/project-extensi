@@ -90,7 +90,6 @@ const App = () => {
           handleValid(values.email);
           alert(`${JSON.stringify(values, null, 2)}`);
         }}
-        enableReinitialize={true}
       >
         <Form className={classes.form}>
           <Grid container spacing={2}>
